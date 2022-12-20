@@ -1,5 +1,6 @@
 import express from "express";
 
+import config from "../config.js";
 import knexConnection from "./options/knexConnection.js";
 import ContainerSQL from "./containers/ContainerSQL.js";
 
@@ -16,6 +17,9 @@ const io = new Socket(httpServer)
 
 const PORT = 8080
 
+const containerProductos = new ContainerSQL(config.mariaDb, 'productos')
+const containerMensajes = new ContainerSQL(config.sqlite3, 'mensajes')
+
 
 io.on('connection', async socket => {
     console.log("Nuevo cliente conectado")
@@ -27,8 +31,7 @@ io.on('connection', async socket => {
     socket.emit("productsList", productos)
 
     socket.on("new product", data=>{
-        productos.push(data)
-
+        containerProductos.guardar(data)
 
         io.sockets.emit('productsList', productos)
     })
@@ -40,7 +43,7 @@ io.on('connection', async socket => {
     socket.emit("mensajes", mensajes)
 
     socket.on("new message", data =>{
-        mensajes.push(data)
+        containerMensajes.guardar(data)
 
         io.sockets.emit('mensajes', mensajes)
     })

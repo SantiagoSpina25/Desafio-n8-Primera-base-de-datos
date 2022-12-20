@@ -12,7 +12,9 @@ const addProducts = ()=>{
     const producto = {
         name: nombreProducto,
         price: precioProducto,
-        thumbnail: fotoProducto
+        thumbnail: fotoProducto,
+        category: "Producto desde el front",
+        stock: 5
     }
 
     socket.emit("new product", producto)
